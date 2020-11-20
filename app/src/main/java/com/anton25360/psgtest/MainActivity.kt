@@ -32,12 +32,12 @@ class MainActivity : AppCompatActivity() {
                 val data: String? = response.body?.string() //response as a string
                 val dataFromApi = JSONObject(data)["items"].toString() //convert to json object
 
-                val dataArray = emptyArray<Any>() //empty array to put data from loop in
+                var dataArray: MutableList<Any> = mutableListOf<Any>() //empty array to put data from loop in
 
                 //loop through json array and print all titles:
                 for (i in 0 until JSONArray(dataFromApi).length()) {
-                    val videoData = JSONArray(dataFromApi)[i].toString() //gets the data of a single video
-                    val mSnippet = JSONObject(videoData)["snippet"].toString()
+                    val videoArray = JSONArray(dataFromApi)[i].toString() //gets the data of a single video in array format
+                    val mSnippet = JSONObject(videoArray)["snippet"].toString()
                     val mThumbnails = JSONObject(mSnippet)["thumbnails"].toString()
                     val mDefault = JSONObject(mThumbnails)["default"].toString()
                     val mResourceId = JSONObject(mSnippet)["resourceId"].toString()
@@ -45,8 +45,8 @@ class MainActivity : AppCompatActivity() {
                     val title = JSONObject(mSnippet)["title"]
                     val url = JSONObject(mDefault)["url"].toString()
                     val videoId = JSONObject(mResourceId)["videoId"].toString()
-
-                    Log.d(TAG, "onResponse: $title + $url + $videoId")
+                    val videoData = arrayOf(title, url, videoId) //stores title, thumbnail url, and video ID of a single video
+                    dataArray.add(videoData)
                 }
             }
 
