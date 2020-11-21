@@ -20,12 +20,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_RV.layoutManager = LinearLayoutManager(this) //set layout manager
+//        main_RV.adapter = MainAdapter(dataArray)
         fetchData()
     }
+
+
 
     private fun fetchData() {
 
         Toast.makeText(this, "getting data...", Toast.LENGTH_SHORT).show()
+
         val url = "https://www.googleapis.com/youtube/v3/playlistItems?key=AIzaSyDY9AyHAa43UnviLtl0GaynGUmEyAvlr5k&playlistId=UU_A--fhX5gea0i4UtpD99Gg&part=snippet&maxResults=5"
         val request = Request.Builder().url(url).build()
 
@@ -55,9 +59,22 @@ class MainActivity : AppCompatActivity() {
 
                     Log.d(TAG, "onResponse: $title + $url + $videoId = $videoData")
                     dataArray.add(videoData)
+
                 }
 
-                Log.d(TAG, dataArray.toString())
+//                Log.d(TAG, dataArray.toString())
+//                main_RV.adapter = MainAdapter(dataArray) //apply adapter, put array in the ()
+
+//                MainActivity?.runOnUiThread {
+//                    popular_item_recyclerView.adapter = PopularItemsAdapter(availableItems, this@PopularItemsFragment)
+//                }
+
+                runOnUiThread {
+                    // Stuff that updates the UI
+                    main_RV.adapter = MainAdapter(dataArray) //apply adapter, put array in the ()
+
+                }
+
             }
 
             override fun onFailure(call: Call, e: IOException) {
