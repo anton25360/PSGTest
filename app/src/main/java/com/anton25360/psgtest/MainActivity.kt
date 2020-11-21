@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -17,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //AIzaSyDY9AyHAa43UnviLtl0GaynGUmEyAvlr5k
+        main_RV.layoutManager = LinearLayoutManager(this) //set layout manager
         fetchData()
     }
 
@@ -32,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                 val data: String? = response.body?.string() //response as a string
                 val dataFromApi = JSONObject(data)["items"].toString() //convert to json object
 
-                var dataArray: MutableList<Any> = mutableListOf<Any>() //empty array to put data from loop in
+                val dataArray: ArrayList<ArrayList<String>> = ArrayList() //empty array to put data from loop in
 
                 //loop through json array and print all titles:
                 for (i in 0 until JSONArray(dataFromApi).length()) {
@@ -42,12 +44,20 @@ class MainActivity : AppCompatActivity() {
                     val mDefault = JSONObject(mThumbnails)["default"].toString()
                     val mResourceId = JSONObject(mSnippet)["resourceId"].toString()
 
-                    val title = JSONObject(mSnippet)["title"]
+                    val title = JSONObject(mSnippet)["title"].toString()
                     val url = JSONObject(mDefault)["url"].toString()
                     val videoId = JSONObject(mResourceId)["videoId"].toString()
-                    val videoData = arrayOf(title, url, videoId) //stores title, thumbnail url, and video ID of a single video
+
+                    val videoData: ArrayList<String> = ArrayList() //stores title, thumbnail url, and video ID of a single video
+                    videoData.add(title)
+                    videoData.add(url)
+                    videoData.add(videoId)
+
+                    Log.d(TAG, "onResponse: $title + $url + $videoId = $videoData")
                     dataArray.add(videoData)
                 }
+
+                Log.d(TAG, dataArray.toString())
             }
 
             override fun onFailure(call: Call, e: IOException) {
