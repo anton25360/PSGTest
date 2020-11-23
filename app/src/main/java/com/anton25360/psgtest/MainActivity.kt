@@ -1,9 +1,11 @@
 package com.anton25360.psgtest
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
@@ -11,8 +13,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
-
 val TAG = "xxx"
+val dataArray: ArrayList<ArrayList<String>> = ArrayList() //empty array to put data from loop in
+
 
 @Suppress("NAME_SHADOWING", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class MainActivity : AppCompatActivity() {
@@ -23,7 +26,6 @@ class MainActivity : AppCompatActivity() {
 //        main_RV.adapter = MainAdapter(dataArray)
         fetchData()
     }
-
 
 
     private fun fetchData() {
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity() {
                 val data: String? = response.body?.string() //response as a string
                 val dataFromApi = JSONObject(data)["items"].toString() //convert to json object
 
-                val dataArray: ArrayList<ArrayList<String>> = ArrayList() //empty array to put data from loop in
+//                val dataArray: ArrayList<ArrayList<String>> = ArrayList() //empty array to put data from loop in
 
                 //loop through json array and print all titles:
                 for (i in 0 until JSONArray(dataFromApi).length()) {
@@ -64,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     // Stuff that updates the UI
-                    main_RV.adapter = MainAdapter(dataArray) //apply adapter, put array in the ()
+                    main_RV.adapter = MainAdapter(dataArray, this@MainActivity) //apply adapter, put array in the ()
 
                 }
 
@@ -74,6 +76,19 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "onFailure: $e")
             }
         })
+
+    }
+
+    fun onItemClick(position: Int) {
+        val clickedItem = dataArray[position]
+        openDetailActivity(clickedItem)
+    }
+
+    private fun openDetailActivity(item:Any) {
+        val intent = Intent(this, DetailActivity::class.java)
+        val chosenItem = arrayListOf(item)
+        intent.putExtra("chosenItem",chosenItem)
+        startActivity(intent)
 
     }
 }
