@@ -1,17 +1,21 @@
 package com.anton25360.psgtest
 
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.main_row.view.*
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.temporal.ChronoUnit
+import java.util.*
 
 
 class DetailActivity : AppCompatActivity() {
@@ -33,10 +37,12 @@ class DetailActivity : AppCompatActivity() {
         val request = Request.Builder().url(url).build()
 
         OkHttpClient().newCall(request).enqueue(object : Callback {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call, response: Response) {
                 val data: String? = response.body?.string() //response as a string
                 val dataFromApi = JSONObject(data)["items"].toString() //convert to json object
-                val mItems = JSONArray(dataFromApi)[0].toString() //gets the data of a single video in array format
+                val mItems =
+                    JSONArray(dataFromApi)[0].toString() //gets the data of a single video in array format
                 val mSnippet = JSONObject(mItems)["snippet"].toString()
                 val mThumbnails = JSONObject(mSnippet)["thumbnails"].toString()
                 val mDefault = JSONObject(mThumbnails)["maxres"].toString()
@@ -49,18 +55,28 @@ class DetailActivity : AppCompatActivity() {
                 val url = JSONObject(mDefault)["url"].toString()
                 val duration = JSONObject(mContentDetails)["duration"].toString()
 
+                val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                val date: Date = format.parse(datePublished)
+
+
+                val d = Duration.parse(duration)
+                val seconds = d[ChronoUnit.SECONDS]
+
+                val numOfMinutes = seconds / 60
+                val numOfSeconds = seconds - (numOfMinutes*60)
+                val durationString = "$numOfMinutes minutes, $numOfSeconds seconds"
+
+
+
+
                 runOnUiThread {
                     // Stuff that updates the UI
                     detail_title.text = title
                     Picasso.get().load(url).into(detail_thumbnail)
-                    detail_datePublished.text = datePublished
-                    detail_videoDuration.text = duration
+                    detail_datePublished.text = date.toString()
+                    detail_videoDuration.text = durationString
                     detail_description.text = description
                 }
-
-
-
-
 
 
                 //loop through json array and print all titles:
