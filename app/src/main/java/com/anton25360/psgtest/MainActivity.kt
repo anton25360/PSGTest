@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val data: String? = response.body?.string() //response as a string
                 val dataFromApi = JSONObject(data)["items"].toString() //convert to json object
+//                Log.d(TAG, "onResponse: $dataFromApi")
 
                 val dataArray: ArrayList<ArrayList<String>> = ArrayList() //empty array to put data from loop in
 
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                     val videoArray = JSONArray(dataFromApi)[i].toString() //gets the data of a single video in array format
                     val mSnippet = JSONObject(videoArray)["snippet"].toString()
                     val mThumbnails = JSONObject(mSnippet)["thumbnails"].toString()
-                    val mDefault = JSONObject(mThumbnails)["default"].toString()
+                    val mDefault = JSONObject(mThumbnails)["maxres"].toString()
                     val mResourceId = JSONObject(mSnippet)["resourceId"].toString()
 
                     val title = JSONObject(mSnippet)["title"].toString()

@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.main_row.view.*
+
 
 class MainAdapter(val dataArray: ArrayList<ArrayList<String>>) : RecyclerView.Adapter<CustomViewHolder>() {
 
@@ -22,11 +24,10 @@ class MainAdapter(val dataArray: ArrayList<ArrayList<String>>) : RecyclerView.Ad
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         val rowData = dataArray[position]
         holder.view.main_row_title.text = rowData[0]
-        holder.view.main_row_thumbnail.text = rowData[1]
+        Picasso.get().load(rowData[1]).into(holder.view.main_row_thumbnail)
         holder.view.main_row_videoId.text = rowData[2]
+
     }
 }
 
-class CustomViewHolder(val view:View): RecyclerView.ViewHolder(view) {
-
-}
+class CustomViewHolder(val view: View): RecyclerView.ViewHolder(view)
