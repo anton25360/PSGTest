@@ -25,7 +25,7 @@ class MainAdapter(val dataArray: ArrayList<ArrayList<String>>) : RecyclerView.Ad
         val rowData = dataArray[position]
         holder.view.main_row_title.text = rowData[0]
         Picasso.get().load(rowData[1]).into(holder.view.main_row_thumbnail)
-        holder.view.main_row_videoId.text = rowData[2]
+//        holder.view.main_row_videoId.text = rowData[2]
 
     }
 }
