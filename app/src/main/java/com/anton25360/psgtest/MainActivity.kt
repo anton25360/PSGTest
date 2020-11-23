@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
@@ -84,11 +83,12 @@ class MainActivity : AppCompatActivity() {
         openDetailActivity(clickedItem)
     }
 
-    private fun openDetailActivity(item:Any) {
+    private fun openDetailActivity(item: java.util.ArrayList<String>) {
         val intent = Intent(this, DetailActivity::class.java)
-        val chosenItem = arrayListOf(item)
-        intent.putExtra("chosenItem",chosenItem)
+        val videoId = item[2]
+        intent.putExtra("videoId",videoId)
         startActivity(intent)
 
     }
 }
+
