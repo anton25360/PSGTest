@@ -39,8 +39,6 @@ class MainActivity : AppCompatActivity() {
                 val data: String? = response.body?.string() //response as a string
                 val dataFromApi = JSONObject(data)["items"].toString() //convert to json object
 
-//                val dataArray: ArrayList<ArrayList<String>> = ArrayList() //empty array to put data from loop in
-
                 //loop through json array and print all titles:
                 for (i in 0 until JSONArray(dataFromApi).length()) {
                     val videoArray = JSONArray(dataFromApi)[i].toString() //gets the data of a single video in array format
