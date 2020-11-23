@@ -30,14 +30,13 @@ class MainActivity : AppCompatActivity() {
 
         Toast.makeText(this, "getting data...", Toast.LENGTH_SHORT).show()
 
-        val url = "https://www.googleapis.com/youtube/v3/playlistItems?key=AIzaSyDY9AyHAa43UnviLtl0GaynGUmEyAvlr5k&playlistId=UU_A--fhX5gea0i4UtpD99Gg&part=snippet&maxResults=5"
+        val url = "https://www.googleapis.com/youtube/v3/playlistItems?key=AIzaSyDY9AyHAa43UnviLtl0GaynGUmEyAvlr5k&playlistId=UU_A--fhX5gea0i4UtpD99Gg&part=snippet&maxResults=10"
         val request = Request.Builder().url(url).build()
 
         OkHttpClient().newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 val data: String? = response.body?.string() //response as a string
                 val dataFromApi = JSONObject(data)["items"].toString() //convert to json object
-//                Log.d(TAG, "onResponse: $dataFromApi")
 
                 val dataArray: ArrayList<ArrayList<String>> = ArrayList() //empty array to put data from loop in
 
@@ -62,13 +61,6 @@ class MainActivity : AppCompatActivity() {
                     dataArray.add(videoData)
 
                 }
-
-//                Log.d(TAG, dataArray.toString())
-//                main_RV.adapter = MainAdapter(dataArray) //apply adapter, put array in the ()
-
-//                MainActivity?.runOnUiThread {
-//                    popular_item_recyclerView.adapter = PopularItemsAdapter(availableItems, this@PopularItemsFragment)
-//                }
 
                 runOnUiThread {
                     // Stuff that updates the UI
