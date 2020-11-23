@@ -48,14 +48,14 @@ class DetailActivity : AppCompatActivity() {
                 val description = JSONObject(mSnippet)["description"].toString()
                 val url = JSONObject(mDefault)["url"].toString()
                 val duration = JSONObject(mContentDetails)["duration"].toString()
-//                detail_textView. text = "$title + $datePublished + $description + $url + $duration"
 
                 runOnUiThread {
                     // Stuff that updates the UI
                     detail_title.text = title
                     Picasso.get().load(url).into(detail_thumbnail)
-
-
+                    detail_datePublished.text = datePublished
+                    detail_videoDuration.text = duration
+                    detail_description.text = description
                 }
 
 
