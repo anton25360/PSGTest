@@ -6,8 +6,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -18,14 +20,61 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 
 
+val commentsArray: ArrayList<ArrayList<String>> = ArrayList() //empty array to put data from loop in
+
 class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
         val videoId = intent.getStringExtra("videoId") //data from intent
+        comments_RV.layoutManager = LinearLayoutManager(this) //set layout manager
+
 
         fetchData(videoId)
+        fetchComments(videoId)
+    }
+
+    private fun fetchComments(videoId: String?) {
+        val url ="https://www.googleapis.com/youtube/v3/commentThreads?key=AIzaSyDY9AyHAa43UnviLtl0GaynGUmEyAvlr5k&part=snippet&videoId=$videoId"
+        val request = Request.Builder().url(url).build()
+
+        OkHttpClient().newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                val data: String? = response.body?.string() //response as a string
+                val dataFromApi = JSONObject(data)["items"].toString() //convert to json object
+
+                //loop through json array and print all titles:
+                for (i in 0 until JSONArray(dataFromApi).length()) {
+                    val mItems = JSONArray(dataFromApi)[i].toString() //gets the data of a single comment in array format
+                    val mSnippet = JSONObject(mItems)["snippet"].toString()
+                    val mTopLevelComment = JSONObject(mSnippet)["topLevelComment"].toString()
+                    val mCommentSnippet = JSONObject(mTopLevelComment)["snippet"].toString()
+
+                    val text = JSONObject(mCommentSnippet)["textOriginal"].toString()
+                    val author = JSONObject(mCommentSnippet)["authorDisplayName"].toString()
+
+                    val commentData: ArrayList<String> = ArrayList() //stores title, thumbnail url, and video ID of a single video
+                    commentData.add(text)
+                    commentData.add(author)
+
+                    Log.d("comments", "onResponse: $text + $author = $commentData")
+                    commentsArray.add(commentData)
+
+                }
+
+                runOnUiThread {
+                    // Stuff that updates the UI
+                    comments_RV.adapter = CommentsAdapter(commentsArray) //apply adapter, put array in the ()
+
+                }
+
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d(TAG, "onFailure: $e")
+            }
+        })
     }
 
 
